@@ -1,3 +1,5 @@
+import functools
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.collections import PatchCollection
@@ -5,8 +7,10 @@ from matplotlib.patches import Polygon
 
 
 def draw_solution(grid, blocks, file_name):
+    blocks = sorted(blocks, key=functools.cmp_to_key(compare))
     width = 10
-    grid_nodes = [[[i, j], [i+1, j], [i+1, j+1], [i, j+1], [i, j]] for i in range(grid[0]) for j in range(grid[1])]
+    grid_nodes = [[[i, j], [i + 1, j], [i + 1, j + 1], [i, j + 1], [i, j]]
+                  for i in range(grid[0]) for j in range(grid[1])]
     fig, ax = plt.subplots()
 
     _draw_blocks(grid_nodes, width, ax, 1, 'w')
@@ -37,11 +41,14 @@ def _draw_blocks(blocks, width, ax, line_width, face_color):
     return
 
 
-def _draw_block_numbers(blocks, grid_width, fig,
-                       line_width, face_color):
+def _draw_block_numbers(blocks, grid_width, fig, line_width, face_color):
     for idx, rec in enumerate(blocks):
-        x = (min(node[0] for node in rec) + max(node[0] for node in rec)) / 2 * grid_width
-        y = (min(node[1] for node in rec) + max(node[1] for node in rec)) / 2 * grid_width
+        x = (min(node[0]
+                 for node in rec) + max(node[0]
+                                        for node in rec)) / 2 * grid_width
+        y = (min(node[1]
+                 for node in rec) + max(node[1]
+                                        for node in rec)) / 2 * grid_width
         size = grid_width * 2
         plt.text(x,
                  y,
@@ -54,3 +61,13 @@ def _draw_block_numbers(blocks, grid_width, fig,
                  ha='center',
                  c=face_color)
     return
+
+
+def compare(block1, block2):
+    max_col_1 = max(item[1] for item in block1)
+    max_col_2 = max(item[1] for item in block2)
+    if max_col_1 != max_col_2:
+        return -max_col_1 + max_col_2
+    else:
+        return max(item[0] for item in block1) - max(item[0]
+                                                     for item in block2)
