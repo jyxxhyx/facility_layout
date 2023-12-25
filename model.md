@@ -1,4 +1,6 @@
-# Set covering model for facility layout
+# Models for two-dimensional cutting
+
+## Set covering for non-guillotine version
 
 Sets
 
@@ -24,3 +26,5 @@ $$
 \text{s.t.} \quad x_s = \sum_{i \in \mathcal{N}_s} y_{si}, \quad \forall s \in \mathcal{S} \\
 \sum_{(m,j) \in \mathcal{C}_i} y_{sj} \leq 1, \forall i \in \mathcal{N}.
 $$
+
+## Guillotine version
