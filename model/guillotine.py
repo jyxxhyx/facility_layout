@@ -101,9 +101,9 @@ class Guillotine(AbstractModel):
 
     def _optimize(self):
         time_limit_in_seconds = 1 * 60 * 60
-        # self.m.solve(PULP_CBC_CMD(timeLimit=time_limit_in_seconds,
-        #                           gapRel=0.01))
-        self.m.solve(GUROBI_CMD(timeLimit=time_limit_in_seconds, gapRel=0.01))
+        self.m.solve(PULP_CBC_CMD(timeLimit=time_limit_in_seconds,
+                                  gapRel=0.01))
+        # self.m.solve(GUROBI_CMD(timeLimit=time_limit_in_seconds, gapRel=0.01))
         return
 
     def _is_feasible(self):
