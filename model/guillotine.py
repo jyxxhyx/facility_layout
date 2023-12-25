@@ -210,7 +210,7 @@ class Guillotine(AbstractModel):
             if not available_shapes:
                 return positions
             max_pieces = [plate.width // s[0] for s in available_shapes]
-            max_pieces_iter = [range(max_piece) for max_piece in max_pieces]
+            max_pieces_iter = [range(max_piece + 1) for max_piece in max_pieces]
             for pieces in itertools.product(*max_pieces_iter):
                 cut_width = sum(piece * s[0]
                                 for piece, s in zip(pieces, available_shapes))
