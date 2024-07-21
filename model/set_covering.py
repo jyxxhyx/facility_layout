@@ -1,3 +1,4 @@
+from itertools import product
 from typing import Tuple, List
 
 import pulp
@@ -18,12 +19,18 @@ class SetCover(AbstractModel):
     def _set_iterables(self):
         self.cells = [(i, j) for i in range(self.grid[0])
                       for j in range(self.grid[1])]
+
         self.extended_shapes = [(s, n) for s, _ in enumerate(self.shapes)
                                 for n in range(self.upper_bound)]
         
+        # self.cell_shapes = {
+        #     s: [(i, j) for i in range(self.grid[0] - shape[0] + 1)
+        #         for j in range(self.grid[1] - shape[1] + 1)]
+        #     for s, shape in enumerate(self.shapes)
+        # }
+
         self.cell_shapes = {
-            s: [(i, j) for i in range(self.grid[0] - shape[0] + 1)
-                for j in range(self.grid[1] - shape[1] + 1)]
+            s: self._generate_limited_cells(shape)
             for s, shape in enumerate(self.shapes)
         }
 
@@ -65,10 +72,10 @@ class SetCover(AbstractModel):
                                   for n in range(self.upper_bound)) <= 1,
                        f'cover-{i}-{j}')
         # simple symmetry breaking on x_s
-        for s, _ in enumerate(self.shapes):
-            for n in range(self.upper_bound - 1):
-                self.m += (self.x[s, n] <= self.x[s, n + 1],
-                           f'symmetry-{s}-{n}')
+        # for s, _ in enumerate(self.shapes):
+        #     for n in range(self.upper_bound - 1):
+        #         self.m += (self.x[s, n] <= self.x[s, n + 1],
+        #                    f'symmetry-{s}-{n}')
         return
 
     def _optimize(self):
@@ -95,6 +102,23 @@ class SetCover(AbstractModel):
                                [i + shape[0], j + shape[1]], [i, j + shape[1]],
                                [i, j]])
         return blocks, list()
+
+    def _generate_limited_cells(self, shape: Tuple[int, int]):
+        width, height = self.shapes[0]
+        x_points = list()
+        for i in range(self.grid[0] // width):
+            for j in range(self.grid[0] // height):
+                x_pos = i * width + j * height
+                if x_pos <= self.grid[0] - shape[0]:
+                    x_points.append(x_pos)
+        y_points = list()
+        for i in range(self.grid[1] // height):
+            for j in range(self.grid[1] // width):
+                y_pos = i * height + j * width
+                if y_pos <= self.grid[1] - shape[1]:
+                    y_points.append(y_pos)
+        cell_list = [(i, j) for (i, j) in product(x_points, y_points)]
+        return cell_list
 
 
 def _is_valid(i, j, k, l, shape):
