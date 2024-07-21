@@ -6,15 +6,15 @@ from matplotlib.collections import PatchCollection
 from matplotlib.patches import Polygon
 
 
-def draw_solution(grid, blocks, cuts, file_name):
+def draw_solution(grid, blocks, cuts, file_name, is_numbered: int = True):
     blocks = sorted(blocks, key=functools.cmp_to_key(compare))
     width = 10
     grid_nodes = [[[i, j], [i + 1, j], [i + 1, j + 1], [i, j + 1], [i, j]]
                   for i in range(grid[0]) for j in range(grid[1])]
     fig, ax = plt.subplots()
 
-    _draw_blocks(grid_nodes, width, ax, 1, 'w')
-    _draw_blocks(blocks, width, ax, 2, 'b')
+    _draw_blocks(grid_nodes, width, ax, 0.5, 'w')
+    _draw_blocks(blocks, width, ax, 2, 'skyblue')
     _draw_block_numbers(blocks, width, fig, 2, 'black')
     if cuts:
         _draw_cuts(cuts, width, ax, 3, 'k')
